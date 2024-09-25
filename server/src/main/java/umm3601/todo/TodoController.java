@@ -42,8 +42,8 @@ public class TodoController implements Controller {
     static final String OWNER_KEY = "owner";
     static final String CATEGORY_KEY = "category";
     static final String BODY_KEY = "body";
-    // static final Boolean STATUS_KEY = "status"; 
-    
+    static final String STATUS_KEY = "status";
+
     private final JacksonMongoCollection<Todo> todoCollection;
 
     public TodoController(MongoDatabase database) {
@@ -54,10 +54,6 @@ public class TodoController implements Controller {
             UuidRepresentation.STANDARD);
     }
 
-
-    /**
-     * @param ctx
-     */
     public void getTodo(Context ctx) {
         String id = ctx.pathParam("id");
         Todo todo;
@@ -75,46 +71,37 @@ public class TodoController implements Controller {
         }
     }
 
-    /**
-     * @param ctx
-     */
+
     public void getTodos(Context ctx) {
-        Bson comebinedFilter = constructFilter(ctx);
+        Bson combinedFilter = constructFilter(ctx);
         Bson sortingOrder = constructSortingOrder(ctx);
 
         ArrayList<Todo> matchingTodos = todoCollection
-            .find(comebinedFilter)
+            .find(combinedFilter)
             .sort(sortingOrder)
             .into(new ArrayList<>());
-        
+
         ctx.json(matchingTodos);
         ctx.status(HttpStatus.OK);
     }
 
-
-    /**
-     * @param ctx
-     * 
-     * @return
-     */
-
-
     private Bson constructFilter(Context ctx) {
         List<Bson> filters = new ArrayList<>();
 
+        if (ctx.queryParamMap().containsKey(STATUS_KEY)) {
+          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(STATUS_KEY)), Pattern.CASE_INSENSITIVE);
+          filters.add(regex(STATUS_KEY, pattern));
+        }
+
+        if (ctx.queryParamMap().containsKey(BODY_KEY)) {
+          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(BODY_KEY)), Pattern.CASE_INSENSITIVE);
+          filters.add(regex(BODY_KEY, pattern));
+        }
 
         Bson combinedFilter = filters.isEmpty() ? new Document() : and(filters);
 
         return combinedFilter;
     }
-
-
-    /**
-     * @param ctx
-     * 
-     * @return
-     */
-
 
 private Bson constructSortingOrder(Context ctx) {
     String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "owner");
@@ -151,7 +138,7 @@ public void deleteTodo(Context ctx) {
         ctx.status(HttpStatus.NOT_FOUND);
         throw new NotFoundResponse(
             "Was unable to delete ID "
-            + id 
+            + id
             + "; perhaps illegal ID or an ID for item not in the syetem?");
         }
         ctx.status(HttpStatus.OK);
@@ -160,17 +147,12 @@ public void deleteTodo(Context ctx) {
 
 
     public void addRoutes(Javalin server) {
-        // Get the specified user
         server.get(API_TODO_BY_ID, this::getTodo);
-    
-        // List users, filtered using query parameters
+
         server.get(API_TODOS, this::getTodos);
-    
-        // Delete the specified user
+
         server.delete(API_TODO_BY_ID, this::deleteTodo);
-    
-        // Add new user with the user info being in the JSON body
-        // of the HTTP request
+
         server.post(API_TODOS, this::addNewTodo);
       }
 
