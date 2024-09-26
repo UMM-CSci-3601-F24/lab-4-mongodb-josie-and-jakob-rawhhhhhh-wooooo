@@ -12,20 +12,20 @@ import { map } from 'rxjs/operators';
 export class TodoService {
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
-  private readonly statusKey = 'status';
-  private readonly bodyKey = 'body';
+  private readonly ownerKey = 'owner';
+  private readonly categoryKey = 'category';
 
   constructor(private httpClient: HttpClient) {
   }
 
-  getTodos(filters?: { status?: string; body?: string }): Observable<Todo[]> {
+  getTodos(filters?: { owner?: string; category?: string }): Observable<Todo[]> {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
-      if (filters.status) {
-        httpParams = httpParams.set(this.statusKey, filters.status);
+      if (filters.owner) {
+        httpParams = httpParams.set(this.ownerKey, filters.owner);
       }
-      if (filters.body) {
-        httpParams = httpParams.set(this.bodyKey, filters.body);
+      if (filters.category) {
+        httpParams = httpParams.set(this.categoryKey, filters.category);
       }
     }
 
@@ -40,19 +40,19 @@ export class TodoService {
   }
 
 
-  filterTodos(todos: Todo[], filters: { owner?: string; category?: string }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { status?: string; body?: string }): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
-    // Filter by owner
-    if (filters.owner) {
-      filters.owner = filters.owner.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    // Filter by status
+    if (filters.status !== undefined) {
+
+      filteredTodos = filteredTodos.filter(todo => todo.status.toString() === filters.status);
     }
 
     // Filter by category
-    if (filters.category) {
-      filters.category = filters.category.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
+    if (filters.body) {
+      filters.body = filters.body.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
     return filteredTodos;

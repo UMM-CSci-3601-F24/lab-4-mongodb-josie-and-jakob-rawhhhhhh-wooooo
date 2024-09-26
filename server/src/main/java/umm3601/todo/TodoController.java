@@ -4,16 +4,11 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.regex;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
-import javax.swing.SortingFocusTraversalPolicy;
 
 import org.bson.Document;
 import org.bson.UuidRepresentation;
@@ -26,11 +21,9 @@ import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 
 import io.javalin.Javalin;
-import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
-import kotlin.collections.Grouping;
 import umm3601.Controller;
 
 
@@ -88,14 +81,14 @@ public class TodoController implements Controller {
     private Bson constructFilter(Context ctx) {
         List<Bson> filters = new ArrayList<>();
 
-        if (ctx.queryParamMap().containsKey(STATUS_KEY)) {
-          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(STATUS_KEY)), Pattern.CASE_INSENSITIVE);
-          filters.add(regex(STATUS_KEY, pattern));
+        if (ctx.queryParamMap().containsKey(OWNER_KEY)) {
+          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(OWNER_KEY)), Pattern.CASE_INSENSITIVE);
+          filters.add(regex(OWNER_KEY, pattern));
         }
 
-        if (ctx.queryParamMap().containsKey(BODY_KEY)) {
-          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(BODY_KEY)), Pattern.CASE_INSENSITIVE);
-          filters.add(regex(BODY_KEY, pattern));
+        if (ctx.queryParamMap().containsKey(CATEGORY_KEY)) {
+          Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(CATEGORY_KEY)), Pattern.CASE_INSENSITIVE);
+          filters.add(regex(CATEGORY_KEY, pattern));
         }
 
         Bson combinedFilter = filters.isEmpty() ? new Document() : and(filters);
@@ -115,14 +108,12 @@ public void addNewTodo(Context ctx) {
 
     String body = ctx.body();
     Todo newTodo = ctx.bodyValidator(Todo.class)
-    .check(td-> td.owner != null && td.owner.length() > 0,
+    .check(td -> td.owner != null && td.owner.length() > 0,
         "Todo must have a non-empty owner; body was " + body)
     .check(td -> td.category != null && td.category.length() > 0,
         "Todo must have a non-empty category; body was " + body)
     .check(td -> td.body != null && td.body.length() > 0,
         "Todo must have a non-empty body; body was " + body)
-    .check(td -> !(td.status == true || td.status == false),
-        "Todo must have a valid status; body was" + body)
     .get();
 
     todoCollection.insertOne(newTodo);

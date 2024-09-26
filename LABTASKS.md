@@ -11,7 +11,7 @@
 ## Getting started
 
 - [ ] Remember to set up your project on GitHub Projects with your stories and estimates
-- [ ] Turn in the URL of the GitHub repository for your group in Canvas. This will make it easier for us to figure out which team is "Snoozing Llamas".
+- [x] Turn in the URL of the GitHub repository for your group in Canvas. This will make it easier for us to figure out which team is "Snoozing Llamas".
 
 Definitely ask if you're ever confused about what you need to do for a given task.
 
@@ -23,16 +23,16 @@ The structure of the server is, for the most part, the same as it has been in th
 
 Spend some time looking over the project with these questions in mind. (Unlike the previous labs, however, you do _not_ need to write up and turn in your answers to these questions.)
 
-- [ ] What do we do in the `Main`, `Server` and `UserController` classes
-- [ ] to set up our connection to the development database?
-- [ ] How do we retrieve a user by ID in the `UserController.getUser(Context...)` method?
-- [ ] How do we retrieve all the users with a given age
-- [ ] in `UserController.getUsers(Context...)`? What's the role of
-- [ ] the variables `combinedFilter` and `sortingOrder` in that method?
-- [ ] What is happening in the `UserControllerSpec.setUpEach()` method?
-- [ ] What's being tested in `UserControllerSpec.canGetUsersWithAge37()`?
-- [ ] How is that test implemented?
-- [ ] Follow the process for adding a new user. What role does `UserController` play in the process?
+- [x] What do we do in the `Main`, `Server` and `UserController` classes
+- [x] to set up our connection to the development database?
+- [x] How do we retrieve a user by ID in the `UserController.getUser(Context...)` method?
+- [x] How do we retrieve all the users with a given age
+- [x] in `UserController.getUsers(Context...)`? What's the role of
+- [x] the variables `combinedFilter` and `sortingOrder` in that method?
+- [X] What is happening in the `UserControllerSpec.setUpEach()` method?
+- [X] What's being tested in `UserControllerSpec.canGetUsersWithAge37()`?
+- [X] How is that test implemented?
+- [x] Follow the process for adding a new user. What role does `UserController` play in the process?
 
 ## Overview of the lab
 

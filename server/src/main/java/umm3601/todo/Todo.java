@@ -7,12 +7,10 @@ import org.mongojack.ObjectId;
 
 @SuppressWarnings({"VisibilityModifier"})
 public class Todo {
-    
 
     @ObjectId @Id
     @SuppressWarnings({"memberName"})
     public String _id;
-     
     public String owner;
     public String category;
     public String body;
@@ -32,7 +30,7 @@ public class Todo {
         return +_id.hashCode();
     }
 
-    @Override 
+    @Override
     public String toString() {
         return body;
     }
