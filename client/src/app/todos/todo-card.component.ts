@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Todo } from '../todo';
+import { Todo } from './todo';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';

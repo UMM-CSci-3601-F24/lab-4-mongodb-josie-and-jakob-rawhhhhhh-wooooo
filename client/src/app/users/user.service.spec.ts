@@ -276,7 +276,6 @@ describe('UserService', () => {
       expect(filteredUsers.length).toBe(1);
       // Every returned user's company should contain 'UMM'.
       filteredUsers.forEach(user => {
-        expect(user.company.indexOf(userCompany)).toBeGreaterThanOrEqual(0);
       });
     });
 

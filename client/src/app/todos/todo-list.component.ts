@@ -1,14 +1,14 @@
 import { Component, signal, inject, computed } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
-import { Todo} from '../todo';
-import { TodoService } from '../todo.service';
+import { Todo} from './todo';
+import { TodoService } from './todo.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { TodoCardComponent } from '../todo-card/todo-card.component';
+import { TodoCardComponent } from './todo-card.component';
 
 import { MatRadioModule } from '@angular/material/radio';
 import { MatOptionModule } from '@angular/material/core';
@@ -106,4 +106,6 @@ export class TodoListComponent {
       body: this.todoBody(),
     });
   });
+
+  deleteTodo()
 }
