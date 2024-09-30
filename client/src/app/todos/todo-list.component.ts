@@ -106,6 +106,4 @@ export class TodoListComponent {
       body: this.todoBody(),
     });
   });
-
-  deleteTodo()
 }

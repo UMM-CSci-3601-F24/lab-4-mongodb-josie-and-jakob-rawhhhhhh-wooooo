@@ -45,14 +45,14 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 
 ### Features to implement
 
-- [ ] Filter todos by status
-- [ ] Filter todos by owner
-- [ ] Filter todos by contents of the body
-- [ ] Filter todos by category
-- [ ] Combinations of filters
-- [ ] Sort by a todo field (status, owner, body contents, or category)
+- [x] Filter todos by status
+- [x] Filter todos by owner
+- [x] Filter todos by contents of the body
+- [x] Filter todos by category
+- [x] Combinations of filters
+- [x] Sort by a todo field (status, owner, body contents, or category)
 - [ ] Limit the number of todos returned
-- [ ] Ability to add new todos. This requires:
+- [x] Ability to add new todos. This requires:
   - [ ] An Angular form/page that allows the user to enter the information for a new todo with reasonable controls and validation.
   - [ ] A new endpoint on the server that allows clients to add new todos.
   - [ ] Logic in the server to add that new todo to the database and return the new ID.
