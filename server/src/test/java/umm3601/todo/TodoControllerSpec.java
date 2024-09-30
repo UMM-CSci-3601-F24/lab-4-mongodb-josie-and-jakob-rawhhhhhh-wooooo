@@ -3,16 +3,13 @@ package umm3601.todo;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,21 +20,16 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.eclipse.jdt.internal.compiler.ast.InstanceOfExpression;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.exceptions.misusing.InjectMocksException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -53,9 +45,8 @@ import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
 import io.javalin.validation.Validation;
-import io.javalin.validation.ValidationError;
-import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
+
 
 @SuppressWarnings({ "MagicNumber" })
 class TodoControllerSpec {
@@ -82,7 +73,9 @@ class TodoControllerSpec {
         String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
 
         mongoClient = MongoClients.create(
-            MongoClientSettings.builder().applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(mongoAddr)))).build());
+            MongoClientSettings.builder().applyToClusterSettings(builder ->
+              builder.hosts(Arrays.asList(new ServerAddress(mongoAddr)))).build());
+
             db = mongoClient.getDatabase("test");
     }
 
@@ -178,7 +171,8 @@ class TodoControllerSpec {
             assertEquals(targetCategory, todo.category);
         }
 
-        List<String> owners = todoArrayListCaptor.getValue().stream().map(todo -> todo.owner).collect(Collectors.toList());
+        List<String> owners = todoArrayListCaptor.getValue().stream()
+          .map(todo -> todo.owner).collect(Collectors.toList());
         assertTrue(owners.contains("Brendan"));
         assertTrue(owners.contains("Samdan"));
     }
@@ -237,6 +231,92 @@ class TodoControllerSpec {
             assertTrue(todo.toString().contains(targetString));
         }
     }
+
+  @Test
+  public void getTodoWithExistentId() throws IOException {
+    String id = todoId.toHexString();
+    when(ctx.pathParam("id")).thenReturn(id);
+
+    todoController.getTodo(ctx);
+
+    verify(ctx).json(todoCaptor.capture());
+    verify(ctx).status(HttpStatus.OK);
+    assertEquals("Samdan", todoCaptor.getValue().owner);
+    assertEquals(todoId.toHexString(), todoCaptor.getValue()._id);
+  }
+
+  @Test
+  public void getTodoWithBadId() throws IOException {
+    when(ctx.pathParam("id")).thenReturn("bad");
+
+    Throwable exception = assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodo(ctx);
+    });
+
+    assertEquals("The requested todo id wasn't a legal Mongo Object ID", exception.getMessage());
+  }
+
+  @Test
+  public void getTodoWithNonexistentId() throws IOException {
+    String id = "588935f5c668650dc77df581";
+    when(ctx.pathParam("id")).thenReturn(id);
+
+    Throwable exception = assertThrows(NotFoundResponse.class, () -> {
+      todoController.getTodo(ctx);
+    });
+
+    assertEquals("The requested todo was not found", exception.getMessage());
+  }
+
+  @Test
+  void addTodo() throws IOException {
+    Todo newTodo = new Todo();
+    newTodo.owner = "Test owner";
+    newTodo.category = "Yupper";
+    newTodo.body = "This is a body";
+    newTodo.status = true;
+
+    String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
+    when(ctx.bodyValidator(Todo.class))
+      .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class,
+                    () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+
+    verify(ctx).status(HttpStatus.CREATED);
+    Document addedTodo = db.getCollection("todos")
+        .find(eq("_id", new ObjectId(mapCaptor.getValue().get("id")))).first();
+
+    assertNotEquals("", addedTodo.get("_id"));
+    assertEquals(newTodo.owner, addedTodo.get("owner"));
+    assertEquals(newTodo.category, addedTodo.get(TodoController.CATEGORY_KEY));
+    assertEquals(newTodo.body, addedTodo.get(TodoController.BODY_KEY));
+    assertEquals(newTodo.status, addedTodo.get("status"));
+  }
+
+  @Test
+  void deleteFoundTodo() throws IOException {
+    String testID = todoId.toHexString();
+    when(ctx.pathParam("id")).thenReturn(testID);
+    assertEquals(1, db.getCollection("todos").countDocuments(eq("_id", new ObjectId(testID))));
+    todoController.deleteTodo(ctx);
+    verify(ctx).status(HttpStatus.OK);
+    assertEquals(0, db.getCollection("todos").countDocuments(eq("_id", new ObjectId(testID))));
+  }
+
+  @Test
+  void tryToDeleteNotFoundTodo() throws IOException {
+    String testID = todoId.toHexString();
+    when(ctx.pathParam("id")).thenReturn(testID);
+    todoController.deleteTodo(ctx);
+    assertEquals(0, db.getCollection("todos").countDocuments(eq("_id", new ObjectId(testID))));
+    assertThrows(NotFoundResponse.class, () -> {
+      todoController.deleteTodo(ctx);
+    });
+    verify(ctx).status(HttpStatus.NOT_FOUND);
+    assertEquals(0, db.getCollection("todos").countDocuments(eq("_id", new ObjectId(testID))));
+  }
 
 
 }

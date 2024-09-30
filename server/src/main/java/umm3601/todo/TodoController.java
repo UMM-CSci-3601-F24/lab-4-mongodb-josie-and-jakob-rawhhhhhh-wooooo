@@ -21,6 +21,7 @@ import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 
 import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
@@ -54,7 +55,7 @@ public class TodoController implements Controller {
         try {
             todo = todoCollection.find(eq("_id", new ObjectId(id))).first();
         } catch (IllegalArgumentException e) {
-            throw new NotFoundResponse("The requested todo id wasn't a legal Mongo Object ID");
+            throw new BadRequestResponse("The requested todo id wasn't a legal Mongo Object ID");
         }
         if (todo == null) {
             throw new NotFoundResponse("The requested todo was not found");
@@ -98,8 +99,7 @@ public class TodoController implements Controller {
 
 private Bson constructSortingOrder(Context ctx) {
     String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "owner");
-    String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortorder"), "asc");
-    Bson sortingOrder = sortOrder.equals("desc") ? Sorts.descending(sortBy) : Sorts.ascending(sortBy);
+    Bson sortingOrder = Sorts.ascending(sortBy);
     return sortingOrder;
 }
 
