@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { throwError } from 'rxjs';
 import { ActivatedRouteStub } from '../../testing/activated-route-stub';
 import { MockTodoService } from '../../testing/todo.service.mock';
 import { Todo } from './todo';
