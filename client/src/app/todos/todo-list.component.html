@@ -23,6 +23,18 @@
               [(ngModel)]="todoCategory">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <input
+              matInput
+              type="number"
+              data-test="todoLimitInput"
+              placeholder="Filter with Limit"
+              [(ngModel)]="todoLimit"
+            />
+          </mat-form-field>
+
         </div>
 
         <div class="flex-row gap-8 flex-wrap">

@@ -59,6 +59,7 @@ export class TodoListComponent {
   todoBody = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
   todoStatus = signal<string | undefined>(undefined);
+  todoLimit = signal<number | undefined>(27);
 
     /**
      * @param ctx
@@ -104,6 +105,7 @@ export class TodoListComponent {
     return this.todoService.filterTodos(serverFilteredTodos, {
       status: this.todoStatus(),
       body: this.todoBody(),
+      limit:this.todoLimit(),
     });
   });
 }
