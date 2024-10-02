@@ -40,7 +40,7 @@ export class TodoService {
   }
 
 
-  filterTodos(todos: Todo[], filters: { status?: string; body?: string }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { status?: string; body?: string; limit?: number}): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
     // Filter by status
@@ -55,7 +55,23 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
+    if (filters.limit !== undefined && Number.isInteger(filters.limit)) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
+
     return filteredTodos;
+  }
+
+  sortTodos(todos: Todo[], criterion: 'owner' | 'category' | 'status'): Todo[] {
+    return todos.sort((a, b) => {
+      if (a[criterion] < b[criterion]) {
+        return -1;
+      } else if (a[criterion] > b[criterion]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 
   addTodo(newTodo: Partial<Todo>): Observable<string> {

@@ -59,6 +59,8 @@ export class TodoListComponent {
   todoBody = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
   todoStatus = signal<string | undefined>(undefined);
+  todoLimit = signal<number | undefined>(27);
+  sortCriterion = signal<string | undefined>(undefined);
 
     /**
      * @param ctx
@@ -105,5 +107,4 @@ export class TodoListComponent {
       status: this.todoStatus(),
       body: this.todoBody(),
     });
-  });
-}
+  }

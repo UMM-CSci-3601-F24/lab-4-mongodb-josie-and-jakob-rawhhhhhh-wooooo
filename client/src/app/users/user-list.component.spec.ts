@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Observable } from 'rxjs';
 import { MockUserService } from '../../testing/user.service.mock';
 import { User } from './user';
 import { UserCardComponent } from './user-card.component';
