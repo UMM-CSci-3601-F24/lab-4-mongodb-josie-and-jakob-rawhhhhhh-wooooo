@@ -58,6 +58,18 @@ export class TodoService {
     return filteredTodos;
   }
 
+  sortTodos(todos: Todo[], criterion: 'owner' | 'category' | 'status'): Todo[] {
+    return todos.sort((a, b) => {
+      if (a[criterion] < b[criterion]) {
+        return -1;
+      } else if (a[criterion] > b[criterion]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
   addTodo(newTodo: Partial<Todo>): Observable<string> {
     return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(res => res.id));
   }

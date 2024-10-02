@@ -43,6 +43,14 @@
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
+          <mat-form-field class="input-field">
+            <mat-label>Sort By</mat-label>
+            <mat-select [(ngModel)]="sortCriterion" data-test="sortCriterionSelect">
+              <mat-option value="owner">Owner</mat-option>
+              <mat-option value="category">Category</mat-option>
+              <mat-option value="status">Status</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <br>
