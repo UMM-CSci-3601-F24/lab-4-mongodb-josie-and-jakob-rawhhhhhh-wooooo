@@ -59,6 +59,7 @@ export class TodoListComponent {
   todoBody = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
   todoStatus = signal<string | undefined>(undefined);
+  todoLimit = signal<number | undefined>(27);
   sortCriterion = signal<string | undefined>(undefined);
 
     /**
@@ -100,12 +101,10 @@ export class TodoListComponent {
       )
     );
 
-    filteredTodos = computed(() => {
-      const serverFilteredTodos = this.serverFilteredTodos();
-      const filtered = this.todoService.filterTodos(serverFilteredTodos, {
-        status: this.todoStatus(),
-        body: this.todoBody(),
-      });
-      return this.todoService.sortTodos(filtered, this.sortCriterion() as 'owner' | 'category' | 'status');
+  filteredTodos = computed(() => {
+    const serverFilteredTodos = this.serverFilteredTodos();
+    return this.todoService.filterTodos(serverFilteredTodos, {
+      status: this.todoStatus(),
+      body: this.todoBody(),
     });
   }
