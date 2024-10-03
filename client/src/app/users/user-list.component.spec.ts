@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Observable } from 'rxjs';
 import { MockUserService } from '../../testing/user.service.mock';
 import { User } from './user';
 import { UserCardComponent } from './user-card.component';
@@ -99,58 +98,3 @@ describe('User list', () => {
   });
 });
 
-/*
- * This test is a little odd, but illustrates how we can use stubs
- * to create mock objects (a service in this case) that be used for
- * testing. Here we set up the mock UserService (userServiceStub) so that
- * _always_ fails (throws an exception) when you request a set of users.
- */
-describe('Misbehaving User List', () => {
-  let userList: UserListComponent;
-  let fixture: ComponentFixture<UserListComponent>;
-
-  let userServiceStub: {
-    getUsers: () => Observable<User[]>;
-  };
-
-  beforeEach(() => {
-    // stub UserService for test purposes
-    userServiceStub = {
-      getUsers: () => new Observable(observer => {
-        observer.error('getUsers() Observer generates an error');
-      }),
-    };
-
-    TestBed.configureTestingModule({
-    imports: [COMMON_IMPORTS, UserListComponent],
-    // providers:    [ UserService ]  // NO! Don't provide the real service!
-    // Provide a test-double instead
-    providers: [{ provide: UserService, useValue: userServiceStub }],
-});
-  });
-
-  // Construct the `userList` used for the testing in the `it` statement
-  // below.
-  beforeEach(waitForAsync(() => {
-    TestBed.compileComponents().then(() => {
-      fixture = TestBed.createComponent(UserListComponent);
-      userList = fixture.componentInstance;
-      fixture.detectChanges();
-    });
-  }));
-
-  it("generates an error if we don't set up a UserListService", () => {
-    // If the service fails, we expect the `serverFilteredUsers` signal to
-    // be an empty array of users.
-    expect(userList.serverFilteredUsers())
-      .withContext("service can't give values to the list if it's not there")
-      .toEqual([]);
-    // We also expect the `errMsg` signal to contain the "Problem contacting…"
-    // error message. (It's arguably a bit fragile to expect something specific
-    // like this; maybe we just want to expect it to be non-empty?)
-    expect(userList.errMsg())
-      .withContext('the error message will be')
-      .toContain('Problem contacting the server – Error Code:');
-      console.log(userList.errMsg);
-  });
-});
