@@ -38,7 +38,7 @@ public class Server {
     this.mongoClient = mongoClient;
     // This is what is known as a "defensive copy". We make a copy of
     // the array so that if the caller modifies the array after passing
-    // it in, we don't have to worry about it. If we didn't do this,
+    // it in, we don't have to worry about it. If we didn't do this,SERVER_PORT
     // the caller could modify the array after passing it in, and then
     // we'd be using the modified array without realizing it.
     this.controllers = Arrays.copyOf(controllers, controllers.length);
@@ -74,7 +74,7 @@ public class Server {
   }
 
   /**
-   * Configure and start the server.
+   * Configure and start the server.user
    *
    * This configures and starts the Javalin server, which will start listening for HTTP requests.
    * It also sets up the server to shut down gracefully if it's killed or if the

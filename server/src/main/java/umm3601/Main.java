@@ -4,6 +4,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 import umm3601.user.UserController;
+import umm3601.todo.TodoController;
+
 
 public class Main {
 
@@ -28,6 +30,7 @@ public class Main {
 
     // Start the server
     server.startServer();
+
   }
 
   /**
@@ -60,7 +63,9 @@ public class Main {
       // the `Controller` interface.
       //
       // You can also remove this UserController once you don't need it.
-      new UserController(database)
+      new UserController(database),
+      new TodoController(database)
+
     };
     return controllers;
   }
